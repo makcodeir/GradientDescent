@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gradient Descent and Neural-Network Regression — Numerical Analysis</title>
+<style>
+:root{--ink:#292720;--muted:#939087;--line:#eceae4;--surface:#faf9f6;--ivory:#f7f5f0;--accent:#d97757;--peach:#fcf5f0;--border:#e7c8b8}*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.slide{max-width:1600px;margin:auto;padding:30px 4.2% 24px;min-height:100vh;display:flex;flex-direction:column}.topline{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font:11px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase}.header{display:flex;align-items:end;justify-content:space-between;gap:24px;margin:5px 0 21px}.stepnav{display:flex;align-items:center;gap:18px}.step-label{color:var(--muted);font-size:10px;white-space:nowrap}.next-btn{min-width:130px;text-align:left;display:flex;justify-content:space-between;gap:15px;padding:11px 14px}.next-btn span{color:var(--accent)}.formula>div,.controls>* ,#landFoot,#landDesc{transition:opacity .2s ease}.changing-text{opacity:0!important}h1{font-size:clamp(25px,2.45vw,38px);letter-spacing:-.04em;line-height:1.12;font-weight:450;margin:0;max-width:600px}.seg,.subseg{display:flex;background:var(--surface);border:1px solid var(--line);padding:4px;border-radius:10px;gap:2px}.seg button,.subseg button{border:0;background:transparent;color:#858278;padding:10px 13px;border-radius:7px;font:500 11px inherit;white-space:nowrap;cursor:pointer}.seg button.active,.subseg button.active{background:#fff;color:var(--ink);box-shadow:0 0 0 1px var(--line)}button:hover{color:var(--accent)}button:focus-visible,input:focus-visible,canvas:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.formula{background:var(--ivory);border-radius:10px;padding:17px 22px;display:flex;align-items:center;gap:30px;min-height:83px}.eyebrow{font:10px ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}.equation{font-family:Georgia,serif;font-size:clamp(16px,1.35vw,21px);letter-spacing:.01em}.formula .take{color:#858278;font-size:12px;line-height:1.5;margin-left:auto;max-width:365px}.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;flex:1;min-height:340px}.card{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:19px 21px 14px;display:flex;flex-direction:column;min-width:0}.cardhead{display:flex;justify-content:space-between;gap:10px;align-items:start}.card h2{font-size:14px;font-weight:550;margin:0 0 5px}.desc{font-size:11px;color:var(--muted);line-height:1.4}.tag{font:10px ui-monospace,monospace;color:var(--muted);white-space:nowrap}.plot{position:relative;flex:1;min-height:230px}canvas{width:100%;height:100%;display:block;touch-action:none}.foot{min-height:42px;border-top:1px solid var(--line);padding-top:11px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11px;color:#858278}.legend{display:flex;gap:16px;align-items:center}.swatch{display:inline-block;width:17px;height:2px;background:var(--accent);vertical-align:middle;margin-right:6px}.dot{display:inline-block;width:7px;height:7px;background:#899ba2;border-radius:50%;margin-right:6px}.badge{background:var(--peach);border:1px solid var(--border);border-radius:7px;padding:7px 10px;color:#745e53;display:flex;align-items:center;gap:10px;flex-wrap:wrap}.badge button{border:0;background:transparent;color:#a65e45;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0;font-size:11px}.controls{border:1px solid var(--line);border-radius:10px;margin-top:14px;padding:15px 19px;display:flex;align-items:center;gap:25px;min-height:79px;flex-wrap:wrap}.control{display:flex;flex-direction:column;gap:8px;min-width:180px}.control label{font-size:11px;color:#6e6b63}.range{display:flex;align-items:center;gap:10px}.range input{width:170px;accent-color:var(--accent);height:3px}.mono{font:11px ui-monospace,SFMono-Regular,Consolas,monospace}.actions{display:flex;gap:7px}.btn{border:1px solid var(--line);border-radius:7px;padding:9px 13px;background:#fff;color:var(--ink);font-size:11px;cursor:pointer}.btn.primary{background:var(--accent);border-color:var(--accent);color:white}.metrics{display:flex;gap:22px;margin-left:auto}.metric span{display:block;color:var(--muted);font-size:10px;margin-bottom:7px}.metric b{font:12px ui-monospace,monospace;font-weight:400}.hint{font-size:11px;color:var(--muted);line-height:1.45}.footer{display:flex;justify-content:space-between;color:#aaa79e;font:10px ui-monospace,monospace;letter-spacing:.03em;margin-top:13px}.hidden{display:none!important}@media(max-width:900px){.header{align-items:start;flex-direction:column}.stepnav{width:100%;justify-content:space-between;gap:10px}.step-label{white-space:normal}.seg{max-width:100%;overflow:auto}.panels{grid-template-columns:1fr}.card{min-height:340px}.formula{align-items:start;flex-direction:column;gap:10px}.formula .take{margin:0}.metrics{margin-left:0}.slide{padding:22px}.footer{gap:20px}}
+</style><style>
+body{padding-bottom:50px}#nextState{display:none!important}
+.ps{max-width:1600px;margin:auto;padding:30px 4.2% 28px;min-height:calc(100vh - 50px);display:flex;flex-direction:column}
+.ps .topline{margin-bottom:6px}
+.ps .header{margin:14px 0 26px}
+.ps h1{max-width:980px;font-size:clamp(24px,2.3vw,34px);line-height:1.18;margin:6px 0 0}
+h1.big{font-size:clamp(30px,3.4vw,52px);max-width:1000px;line-height:1.1}
+.lead{font-size:14px;line-height:1.6;color:#6e6b63;max-width:860px;margin:12px 0 0}
+.pb{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;align-content:start}
+.pb3{grid-template-columns:repeat(3,1fr)}.pb5{grid-template-columns:repeat(5,1fr)}
+.pb .full{grid-column:1/-1}
+.ps .card{padding:22px 24px 20px;gap:4px;background:#fff;box-shadow:0 1px 0 var(--line)}
+.ps .card h2{font-size:15px;margin:0 0 6px;line-height:1.35}
+.cap{font:10px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+.ps p{font-size:13px;line-height:1.65;color:#5f5c54;margin:0 0 10px}
+.ps ul{margin:4px 0 6px;padding:0;list-style:none}
+.ps li{font-size:13px;line-height:1.6;color:#4a473f;padding-left:18px;position:relative;margin:6px 0}
+.ps li:before{content:"";position:absolute;left:0;top:.8em;width:8px;height:1.5px;background:var(--accent)}
+.ps li strong{color:var(--ink);font-weight:550}
+.ps em{font-style:normal;color:var(--ink);border-bottom:1px dotted var(--muted)}
+.desc{font-size:12.5px;line-height:1.6;color:#6e6b63;margin-top:6px}
+eq{display:block;background:var(--ivory);border-radius:9px;padding:12px 16px;margin:8px 0;font-family:Georgia,serif;font-size:clamp(14px,1.2vw,18px);line-height:1.5;overflow-x:auto;color:var(--ink)}
+eq.box{border:1px solid var(--border);background:var(--peach)}
+fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.85em;margin:0 .2em}
+fr i{font-style:normal;padding:0 .25em;line-height:1.25}fr i:first-child{border-bottom:1px solid currentColor}
+kp{display:block;grid-column:1/-1;background:var(--peach);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px;line-height:1.6;color:#6b5448}
+kp b{display:inline-block;font:10px ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;color:#a65e45;margin-right:12px;font-weight:400;vertical-align:1px}
+bridge{display:block;margin-top:auto;padding-top:18px;font:11px ui-monospace,monospace;color:var(--muted);letter-spacing:.03em}
+bridge b{color:var(--accent);font-weight:400;margin-right:6px}
+.pb{margin-bottom:14px}
+.t{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:6px}
+.t th{font:10px ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:400;padding:8px 8px 10px;border-bottom:1px solid var(--line)}
+.t td{padding:10px 8px;border-bottom:1px solid var(--line);color:#4a473f;font-size:13px}
+.go{cursor:pointer;transition:border-color .2s,transform .2s}.go:hover{border-color:var(--accent);transform:translateY(-2px)}
+#dnav{position:fixed;left:0;right:0;bottom:0;height:50px;background:#fffffff2;border-top:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:0 4.2%;z-index:50;backdrop-filter:blur(8px)}
+#dlab{font:10px ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap;min-width:260px}
+#dbar{flex:1;display:flex;gap:3px}#dbar i{flex:1;height:4px;border-radius:2px;background:var(--line);cursor:pointer}
+#dbar i.on{background:#e7c8b8}#dbar i.cur{background:var(--accent)}
+#dnav .btn{padding:8px 12px}#dnav .btn:disabled{opacity:.4;cursor:default}
+.hidden{display:none!important}
+@media(max-width:900px){.pb,.pb3,.pb5{grid-template-columns:1fr!important}#dlab{display:none}.ps{padding:22px}}
+</style></head><body><div id="deck">
+
+<!-- ============ TITLE & ROADMAP ============ -->
+<section class="ps" id="t0">
+<div class="topline"><span>Numerical Analysis · Machine Learning</span><span>Overview</span></div>
+<header class="header"><div>
+<div class="eyebrow">Full presentation</div>
+<h1 class="big">Gradient Descent and Neural-Network Regression</h1>
+<p class="lead">Viewed through the lens of numerical analysis: how a statistical problem becomes an iteration, and how that iteration shapes the function we learn.</p>
+</div></header>
+<div class="pb pb5">
+<div class="card go" data-go="1"><div class="cap">Part 1</div><h2>Regression as a numerical problem</h2><div class="desc">From expectation to finite sum, and why we must iterate.</div></div>
+<div class="card go" data-go="7"><div class="cap">Part 2</div><h2>Gradient descent as a method</h2><div class="desc">The iteration, backpropagation, step size and conditioning.</div></div>
+<div class="card go" data-go="12"><div class="cap">Part 3</div><h2>Convergence</h2><div class="desc">Smoothness, safe step sizes, convex and non-convex guarantees.</div></div>
+<div class="card go" data-go="15"><div class="cap">Part 4</div><h2>Effect on the learned function</h2><div class="desc">Implicit bias, early stopping and generalization.</div></div>
+<div class="card go" data-go="17"><div class="cap">Part 5</div><h2>Summary</h2><div class="desc">The whole argument on one slide.</div></div>
+</div>
+<kp><b>Storyline</b>A statistical goal becomes a loss function → the loss is non-convex, so we iterate → the iteration needs cheap gradients and a safe step size → the iteration also decides which function we learn.</kp>
+<bridge><b>Start →</b> Part 1: from a statistical target to a numerical problem.</bridge>
+</section>
+
+<!-- ============ PART 1 ============ -->
+<section class="ps" id="p1a">
+<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>1 / 4</span></div>
+<header class="header"><div>
+<div class="eyebrow">From statistics to a finite sum</div>
+<h1>The Regression Problem and Empirical Risk</h1>
+<p class="lead">Regression targets an expectation that we cannot compute directly. We replace it with a sample average we can.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Statistical target</div>
+<p>The regression function is the conditional mean of Y given X. It minimizes the mean squared error:</p>
+<eq>m(x) = 𝔼[ Y | X = x ]</eq>
+<eq>m(·) = arg min<sub>f</sub> 𝔼[ (f(X) − Y)² ]</eq>
+</div>
+<div class="card">
+<div class="cap">Numerical substitute</div>
+<p>The expectation is unknown. We only have samples (Xᵢ, Yᵢ), for i = 1, …, N, so we replace 𝔼 by a sample average:</p>
+<eq class="box">J(f) = <fr><i>1</i><i>N</i></fr> ∑<sub>i=1</sub><sup>N</sup> ( f(Xᵢ) − Yᵢ )²</eq>
+</div>
+<kp><b>Key point</b>The expectation is replaced by a quadrature (Monte Carlo) approximation. This introduces a statistical error that is controlled by the sample size N.</kp>
+</div>
+<bridge><b>Next →</b> minimizing over all functions is infeasible, so we restrict the search to a parametric family.</bridge>
+</section>
+
+<section class="ps" id="p1b">
+<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>2 / 4</span></div>
+<header class="header"><div>
+<div class="eyebrow">Learning becomes optimization</div>
+<h1>Restricting to a Parametric Family</h1>
+<p class="lead">Once the model is a function of finitely many parameters, learning turns into an optimization problem over θ.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Step 1 · Parametrize</div>
+<p>Minimizing over all functions is numerically infeasible. We restrict the search to a family indexed by θ:</p>
+<eq>f<sub>θ</sub> : ℝ<sup>d</sup> → ℝ,  θ ∈ ℝ<sup>p</sup></eq>
+</div>
+<div class="card">
+<div class="cap">Step 2 · Substitute into the empirical risk</div>
+<eq class="box">J(θ) = <fr><i>1</i><i>N</i></fr> ∑<sub>i=1</sub><sup>N</sup> ( f<sub>θ</sub>(Xᵢ) − Yᵢ )²</eq>
+<p>With residuals rᵢ(θ) = f<sub>θ</sub>(Xᵢ) − Yᵢ, this is a squared norm:</p>
+<eq>J(θ) = <fr><i>1</i><i>N</i></fr> ‖ r(θ) ‖<sub>2</sub>²</eq>
+</div>
+<kp><b>Key point</b>Regression with a parametric model is a nonlinear least-squares problem in θ.</kp>
+</div>
+<bridge><b>Try it →</b> the residuals are the dashed lines in the first lab. Drag the slope and watch them change.</bridge>
+</section>
+
+<section class="ps" id="p1c">
+<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>3 / 4</span></div>
+<header class="header"><div>
+<div class="eyebrow">Two regimes</div>
+<h1>Linear Model vs Neural Network</h1>
+<p class="lead">The shape of the loss depends on how the model depends on θ. That single fact decides how hard the problem is.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Comparison</div>
+<table class="t">
+<tr><th>Model</th><th>Dependence on θ</th><th>Loss J(θ)</th></tr>
+<tr><td>Linear regression</td><td>f<sub>θ</sub>(x) = θᵀx</td><td>Convex (quadratic)</td></tr>
+<tr><td>Neural network</td><td>Nonlinear in θ</td><td>Non-convex</td></tr>
+</table>
+<p style="margin-top:14px">For the linear model, the classical solution is available in closed form through the normal equations:</p>
+<eq>AᵀA θ = Aᵀy</eq>
+</div>
+<div class="card">
+<div class="cap">Linear case in matrix form</div>
+<p>Let A be the design matrix (rows Xᵢᵀ) and y the vector of targets:</p>
+<eq>J(θ) = <fr><i>1</i><i>N</i></fr> ‖Aθ − y‖<sub>2</sub>²</eq>
+<eq>∇J(θ) = <fr><i>2</i><i>N</i></fr> Aᵀ(Aθ − y)</eq>
+<eq>∇²J(θ) = <fr><i>2</i><i>N</i></fr> AᵀA  (constant)</eq>
+</div>
+<kp><b>Key point</b>Convexity gives a unique minimizer and a closed-form solution. Both are lost for neural networks.</kp>
+</div>
+<bridge><b>Try it →</b> in the lab, switch between the linear model and the neural network and compare their landscapes.</bridge>
+</section>
+
+<section class="ps" id="p1d">
+<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>4 / 4</span></div>
+<header class="header"><div>
+<div class="eyebrow">The need for iteration</div>
+<h1>Why We Must Solve Iteratively</h1>
+<p class="lead">For a neural network there is no formula to evaluate. We have to walk toward a minimum step by step.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Properties of the neural-network loss</div>
+<ul>
+<li>J(θ) is not quadratic.</li>
+<li>∇²J(θ) is not constant and may have negative eigenvalues (saddle points).</li>
+<li>Several local minima may exist.</li>
+<li>No closed-form solution: the normal equations do not apply.</li>
+</ul>
+</div>
+<div class="card">
+<div class="cap">Problem and method</div>
+<p>The problem to solve:</p>
+<eq>min<sub>θ ∈ ℝ<sup>p</sup></sub> J(θ) = <fr><i>1</i><i>N</i></fr> ∑<sub>i=1</sub><sup>N</sup> ( f<sub>θ</sub>(Xᵢ) − Yᵢ )²</eq>
+<p>The numerical method, gradient descent:</p>
+<eq class="box">θ<sub>k+1</sub> = θ<sub>k</sub> − α<sub>k</sub> ∇J(θ<sub>k</sub>)</eq>
+</div>
+<kp><b>Key point</b>Non-convexity forces an iterative method. Gradient descent is the steepest descent method of numerical analysis, now applied in very high dimension.</kp>
+</div>
+<bridge><b>Next →</b> Part 2: the iteration itself, how to compute the gradient cheaply, and what can go wrong.</bridge>
+</section>
+
+<!-- ============ PART 2 ============ -->
+<section class="ps" id="p2a">
+<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>1 / 4</span></div>
+<header class="header"><div>
+<div class="eyebrow">The iteration</div>
+<h1>Steepest Descent for the Loss Function</h1>
+<p class="lead">Starting from an initial guess, each step moves against the gradient, the direction in which the loss increases fastest.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Update rule</div>
+<p>We want min J(θ). Nonlinear and non-convex, so we iterate:</p>
+<eq class="box">θ<sub>k+1</sub> = θ<sub>k</sub> − α<sub>k</sub> ∇J(θ<sub>k</sub>),  k = 0, 1, 2, …</eq>
+<ul>
+<li>∇J(θ<sub>k</sub>) points toward steepest <em>ascent</em>.</li>
+<li>−∇J(θ<sub>k</sub>) points toward steepest <em>descent</em>.</li>
+<li>αₖ &gt; 0 is the step size, also called the learning rate.</li>
+</ul>
+</div>
+<div class="card">
+<div class="cap">Stopping criteria</div>
+<ul>
+<li>Small gradient: ‖∇J(θ<sub>k</sub>)‖ &lt; ε</li>
+<li>Small step: ‖θ<sub>k+1</sub> − θ<sub>k</sub>‖ &lt; ε</li>
+<li>Iteration budget: k &gt; K<sub>max</sub></li>
+</ul>
+</div>
+<kp><b>Key point</b>This is steepest descent applied to a very high-dimensional objective. Two questions remain: how to compute ∇J cheaply, and how non-convexity changes the guarantees.</kp>
+</div>
+<bridge><b>Try it →</b> click the landscape to choose θ₀, then step and watch the iterates follow −∇J.</bridge>
+</section>
+
+<section class="ps" id="p2b">
+<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>2 / 4</span></div>
+<header class="header"><div>
+<div class="eyebrow">Cost of the gradient</div>
+<h1>The Gradient Must Be Cheap</h1>
+<p class="lead">With p in the millions, computing each partial derivative separately is not an option.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Naive approach · finite differences</div>
+<eq>∂J/∂θ<sub>j</sub> ≈ ( J(θ + h eⱼ) − J(θ) ) / h</eq>
+<ul>
+<li>One full evaluation of J per coordinate.</li>
+<li>Cost: O(p) evaluations per gradient step.</li>
+<li>For p = 10⁶, that is a million forward passes per iteration. Infeasible.</li>
+</ul>
+</div>
+<div class="card">
+<div class="cap">Backpropagation</div>
+<p>All p partial derivatives are obtained in one backward pass, at a cost comparable to one evaluation of J:</p>
+<eq class="box">Cost of ∇J ≈ Cost of J  (a constant factor)</eq>
+</div>
+<kp><b>Key point</b>Backpropagation is not a new mathematical idea. It is the chain rule, organized for computational efficiency. That is what makes gradient descent feasible at scale.</kp>
+</div>
+<bridge><b>Next →</b> what exactly is this organization of the chain rule?</bridge>
+</section>
+
+<section class="ps" id="p2c">
+<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>3 / 4</span></div>
+<header class="header"><div>
+<div class="eyebrow">Backpropagation</div>
+<h1>Forward Pass and Backward Pass</h1>
+<p class="lead">The network is a composition of layers. We evaluate it forward, store intermediate values, and then apply the chain rule backward.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Forward pass</div>
+<eq>f<sub>θ</sub>(x) = f<sup>(L)</sup>( f<sup>(L−1)</sup>( ⋯ f<sup>(1)</sup>(x) ⋯ ) )</eq>
+<p>Compute and store the activations layer by layer:</p>
+<eq>a<sup>(0)</sup> = x,  z<sup>(l)</sup> = W<sup>(l)</sup>a<sup>(l−1)</sup> + b<sup>(l)</sup>,  a<sup>(l)</sup> = σ(z<sup>(l)</sup>)</eq>
+</div>
+<div class="card">
+<div class="cap">Backward pass</div>
+<p>Define the layer error δ<sup>(l)</sup> = ∂J/∂z<sup>(l)</sup>. It is computed from the output back to the input:</p>
+<eq>δ<sup>(L)</sup> = ∇<sub>a<sup>(L)</sup></sub>J ⊙ σ′(z<sup>(L)</sup>)</eq>
+<eq>δ<sup>(l)</sup> = (W<sup>(l+1)</sup>)ᵀ δ<sup>(l+1)</sup> ⊙ σ′(z<sup>(l)</sup>)</eq>
+<p>Parameter gradients:</p>
+<eq class="box">∂J/∂W<sup>(l)</sup> = δ<sup>(l)</sup>(a<sup>(l−1)</sup>)ᵀ,  ∂J/∂b<sup>(l)</sup> = δ<sup>(l)</sup></eq>
+</div>
+<kp><b>Key point</b>Every step is the chain rule. The backward recursion is a sequence of products with transposed weight matrices. This is where numerical issues, such as conditioning and growth or decay of magnitudes, enter.</kp>
+</div>
+<bridge><b>Next →</b> those numerical issues, and the role of the step size α.</bridge>
+</section>
+
+<section class="ps" id="p2d">
+<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>4 / 4</span></div>
+<header class="header"><div>
+<div class="eyebrow">Numerical levers</div>
+<h1>The Two Levers: Step Size and Jacobians</h1>
+<p class="lead">Three things govern whether gradient descent behaves well: the step size, the conditioning of the problem, and the depth of the network.</p>
+</div></header>
+<div class="pb pb3">
+<div class="card">
+<div class="cap">1 · Step size α</div>
+<p>A stability parameter, not just a tuning knob.</p>
+<ul>
+<li>Too small: convergence is extremely slow.</li>
+<li>Too large: the iteration oscillates or diverges.</li>
+</ul>
+<p>For smooth J with Lipschitz constant L of the gradient:</p>
+<eq class="box">0 &lt; α &lt; 2 / L</eq>
+</div>
+<div class="card">
+<div class="cap">2 · Conditioning</div>
+<p>The convergence rate depends on the condition number of the Hessian:</p>
+<eq>κ = λ<sub>max</sub> / λ<sub>min</sub></eq>
+<p>A large κ means slow convergence, the same phenomenon as in linear solvers.</p>
+</div>
+<div class="card">
+<div class="cap">3 · Vanishing and exploding gradients</div>
+<p>δ<sup>(l)</sup> involves repeated multiplication by W<sup>(l+1)</sup> and σ′. The magnitude can therefore decay or grow exponentially with depth:</p>
+<eq>‖δ<sup>(l)</sup>‖ ∼ ∏<sub>j&gt;l</sub> ‖W<sup>(j)</sup>‖ · ‖σ′‖</eq>
+</div>
+<kp><b>Key point</b>Gradient descent is simple to write, but its behavior is governed by conditioning and stability. These are the same principles as in classical numerical analysis, now applied to a non-convex, high-dimensional problem.</kp>
+</div>
+<bridge><b>Next →</b> Part 3: making the stability condition 0 &lt; α &lt; 2/L precise.</bridge>
+</section>
+
+<!-- ============ PART 3 ============ -->
+<section class="ps" id="p3a">
+<div class="topline"><span>Part 3 · Convergence</span><span>1 / 2</span></div>
+<header class="header"><div>
+<div class="eyebrow">The basic guarantee</div>
+<h1>The Loss Keeps Going Down</h1>
+<p class="lead">Under one assumption, a smooth loss, a sufficiently small step always decreases J. The step size must respect the curvature.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Assumption · L-smoothness</div>
+<p>Run the iteration with a fixed step:</p>
+<eq>θ<sub>k+1</sub> = θ<sub>k</sub> − α ∇J(θ<sub>k</sub>)</eq>
+<p>There is a constant L &gt; 0 such that:</p>
+<eq>‖∇J(θ) − ∇J(θ′)‖ ≤ L ‖θ − θ′‖</eq>
+<p>In plain words, the gradient does not change too fast. L measures how strongly the loss curves.</p>
+</div>
+<div class="card">
+<div class="cap">Descent lemma</div>
+<eq class="box">J(θ<sub>k+1</sub>) ≤ J(θ<sub>k</sub>) − α ( 1 − Lα/2 ) ‖∇J(θ<sub>k</sub>)‖²</eq>
+<ul>
+<li>If 0 &lt; α &lt; 2/L, the bracketed term is positive.</li>
+<li>The loss then strictly decreases at every step.</li>
+<li>Too large a step, and the loss can increase instead.</li>
+</ul>
+<p>This is the same stability condition known from numerical methods: the step is limited by the curvature of the problem.</p>
+</div>
+<kp><b>Key point</b>Convergence is not automatic. It requires a small enough step, and the safe range is set by the smoothness constant L.</kp>
+</div>
+<bridge><b>Next →</b> where does the iteration stop, and how fast does it get there?</bridge>
+</section>
+
+<section class="ps" id="p3b">
+<div class="topline"><span>Part 3 · Convergence</span><span>2 / 2</span></div>
+<header class="header"><div>
+<div class="eyebrow">Speed and guarantees</div>
+<h1>Convex vs Non-Convex</h1>
+<p class="lead">With a safe step size, gradient descent always drives the gradient to zero. The open question is what kind of flat point it reaches.</p>
+</div></header>
+<div class="pb">
+<div class="card full">
+<eq class="box">‖∇J(θ<sub>k</sub>)‖ → 0</eq>
+<p>So the iteration always reaches a stationary point, a place where the loss is flat. Whether that point is the global minimum depends on the shape of the loss.</p>
+</div>
+<div class="card">
+<div class="cap">Case 1 · Convex loss (linear regression)</div>
+<p>Every stationary point is the global minimum, so convergence is complete.</p>
+<ul>
+<li>κ ≈ 1 (well-conditioned): fast convergence.</li>
+<li>κ ≫ 1 (ill-conditioned): very slow, since the iteration crawls along flat directions.</li>
+</ul>
+<p>Iterations needed for accuracy ε:</p>
+<eq class="box">k ∼ κ · log(1/ε)</eq>
+</div>
+<div class="card">
+<div class="cap">Case 2 · Non-convex loss (neural networks)</div>
+<p>A stationary point can be a local minimum, a maximum, or a saddle point. Gradient descent does not guarantee the global minimum.</p>
+<p>Picture walking downhill in fog. You stop when the ground is flat, but that spot may be a valley floor, a ledge, or a saddle. From the slope alone, you cannot tell which.</p>
+</div>
+<kp><b>Key point</b>In both cases gradient descent reaches a stationary point. Only in the convex case is that point guaranteed to be the global minimum. In both cases, speed is governed by κ.</kp>
+</div>
+<bridge><b>Try it →</b> in the 3D lab, release three balls on a non-convex surface and vary α for each.</bridge>
+</section>
+
+<!-- ============ PART 4 ============ -->
+<section class="ps" id="p4a">
+<div class="topline"><span>Part 4 · Effect on neural-network regression</span><span>1 / 2</span></div>
+<header class="header"><div>
+<div class="eyebrow">The algorithm selects the solution</div>
+<h1>Many Functions Fit the Data</h1>
+<p class="lead">Several parameter vectors can reach a small training loss while defining different regression functions. The iteration decides which one we get.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Three numerical choices</div>
+<ul>
+<li><strong>Initialization θ₀</strong> selects the basin of attraction we enter. This is what the three balls in the 3D lab show.</li>
+<li><strong>Step size α</strong>: large steps overshoot and oscillate; small steps move slowly.</li>
+<li><strong>Stopping index K</strong>: we stop at θ<sub>K</sub>, not at the true minimizer.</li>
+</ul>
+<eq>Training loss ≈ small for many θ,  but f<sub>θ</sub> differs</eq>
+</div>
+<div class="card">
+<div class="cap">A clean case · linear model, θ₀ = 0</div>
+<p>If A has more columns than rows, the minimizers are not unique. Gradient descent converges to the one with the smallest norm:</p>
+<eq class="box">θ* = Aᵀ(AAᵀ)<sup>−1</sup>y,  ‖θ*‖<sub>2</sub> = min { ‖θ‖<sub>2</sub> : Aθ = y }</eq>
+<p>This is the simplest example of implicit bias: among all exact solutions, gradient descent prefers the one of small norm.</p>
+</div>
+<kp><b>Key point</b>Gradient descent is not a neutral solver. Its path and stopping point are part of the model. The triple (θ₀, α, K) selects the regression function we actually learn.</kp>
+</div>
+<bridge><b>Next →</b> how does this selection affect test error?</bridge>
+</section>
+
+<section class="ps" id="p4b">
+<div class="topline"><span>Part 4 · Effect on neural-network regression</span><span>2 / 2</span></div>
+<header class="header"><div>
+<div class="eyebrow">Generalization</div>
+<h1>The Numerical Choices Control Generalization</h1>
+<p class="lead">Training error and test error follow different paths as the iteration proceeds. Stopping early is a form of regularization.</p>
+</div></header>
+<div class="pb">
+<div class="card">
+<div class="cap">Two errors as K grows</div>
+<eq>J(θ<sub>K</sub>)  training error</eq>
+<eq>𝔼[ (f<sub>θ<sub>K</sub></sub>(X) − Y)² ]  test error</eq>
+<ul>
+<li>Training error always decreases.</li>
+<li>Test error decreases, then increases. The rise is overfitting.</li>
+</ul>
+</div>
+<div class="card">
+<div class="cap">Early stopping as implicit regularization</div>
+<p>Stopping at a moderate K keeps θ<sub>K</sub> close to θ₀, with small norm. The function f<sub>θ<sub>K</sub></sub> is then smoother and fits the noise less.</p>
+<eq class="box">K ⟷ regularization strength</eq>
+<p>In the linear case, early stopping of gradient descent closely corresponds to ridge (shrinkage) regularization.</p>
+</div>
+<kp><b>Key point</b>Step size, initialization, and the number of iterations are not implementation details. They control the smoothness and norm of the learned function, and therefore its generalization.</kp>
+</div>
+<bridge><b>Next →</b> putting the whole argument together.</bridge>
+</section>
+
+<!-- ============ PART 5 ============ -->
+<section class="ps" id="p5">
+<div class="topline"><span>Part 5 · Summary</span><span>What we have seen</span></div>
+<header class="header"><div>
+<div class="eyebrow">Summary</div>
+<h1>Gradient Descent Through the Lens of Numerical Analysis</h1>
+</div></header>
+<div class="pb">
+<div class="card go" data-go="1"><div class="cap">1 · Regression as a numerical problem</div>
+<eq>min<sub>θ</sub> J(θ) = <fr><i>1</i><i>N</i></fr> ∑ ( f<sub>θ</sub>(Xᵢ) − Yᵢ )²</eq>
+<div class="desc">A nonlinear least-squares problem: convex for linear models, non-convex for neural networks.</div></div>
+<div class="card go" data-go="7"><div class="cap">2 · The method</div>
+<eq>θ<sub>k+1</sub> = θ<sub>k</sub> − α<sub>k</sub> ∇J(θ<sub>k</sub>)</eq>
+<div class="desc">The gradient comes from backpropagation, at a cost of about one evaluation of J, versus O(p) for finite differences.</div></div>
+<div class="card go" data-go="12"><div class="cap">3 · Convergence</div>
+<ul>
+<li>L-smoothness gives a safe step, 0 &lt; α &lt; 2/L.</li>
+<li>Convex: global minimum, with k ∼ κ · log(1/ε).</li>
+<li>Non-convex: a stationary point, not necessarily the global minimum.</li>
+</ul></div>
+<div class="card go" data-go="15"><div class="cap">4 · Effect on the learned function</div>
+<div class="desc" style="font-size:13px;line-height:1.6">The choices (θ₀, α, K) select which function f<sub>θ</sub> is learned. The algorithm carries an implicit bias toward smooth, low-norm solutions, and early stopping acts as regularization.</div></div>
+<kp><b>In one line</b>Gradient descent is steepest descent applied to a high-dimensional, non-convex objective. Its numerical behavior, namely conditioning, stability and stopping, directly shapes the regression function it produces.</kp>
+</div>
+<bridge><b>Tip →</b> click any card to jump back to its part.</bridge>
+</section>
+
+</div>
+<div id="dnav"><span id="dlab"></span><div id="dbar"></div><button class="btn" id="dprev">← Prev</button><button class="btn primary" id="dnext">Next →</button></div>
+<main class="slide hidden" id="demo"><div class="topline"><span></span><span>01/01</span></div><header class="header"><h1>From Prediction Error to<br>Iterative Optimization</h1><div class="stepnav"><span class="step-label mono" id="stepLabel">01 / 03 &nbsp; Empirical Risk &amp; Model</span><button class="btn next-btn" id="nextState">Next section <span aria-hidden="true">→</span></button></div></header><section class="formula"><div><div class="eyebrow" id="formulaLabel">01 / Empirical risk</div><div class="equation" id="formula"></div></div><div class="take" id="take"></div></section><section class="panels"><article class="card"><div class="cardhead"><div><h2>Data &amp; model space</h2><div class="desc">Observed samples, predictions and their residuals</div></div><span class="tag">X → Y</span></div><div class="plot"><canvas id="dataCanvas" aria-label="Data points and fitted model"></canvas></div><div class="foot"><div class="legend"><span><i class="dot"></i>Observed data</span><span><i class="swatch"></i>Model prediction</span><span>┊ &nbsp;Residual</span></div></div></article><article class="card"><div class="cardhead"><div><h2>Parameter &amp; loss landscape</h2><div class="desc" id="landDesc">A one-dimensional slice of empirical risk</div></div><span class="tag">θ → J(θ)</span></div><div class="plot"><canvas id="lossCanvas" tabindex="0" aria-label="Loss landscape. In gradient descent, click to choose the initial parameter."></canvas></div><div class="foot" id="landFoot"></div></article></section><section class="controls"><div class="control" id="slopeControl"><label for="slope">Parameter / slope <span class="mono">w</span></label><div class="range"><input id="slope" type="range" min="-1" max="3" value="0.15" step="0.01"><span class="mono" id="slopeVal"></span></div></div><div id="modelControl" class="hidden"><div class="eyebrow">Model family</div><div class="subseg"><button class="active" data-model="linear">Linear Model</button><button data-model="neural">Neural Network</button></div></div><div class="control hidden" id="rateControl"><label for="rate">Learning rate <span class="mono">α</span></label><div class="range"><input id="rate" type="range" min="0.02" max="0.8" step="0.01" value="0.22"><span class="mono" id="rateVal"></span></div></div><div class="actions hidden" id="actions"><button class="btn primary" id="step">Step (+1)</button><button class="btn" id="auto">Auto-Run</button><button class="btn" id="reset">Reset</button></div><div class="hint" id="controlHint">Drag the slope to change the fit and its empirical risk.</div><div class="metrics"><div class="metric" id="iterMetric"><span>Iteration k</span><b id="iteration">0</b></div><div class="metric"><span>Current loss J(θ)</span><b id="lossVal"></b></div><div class="metric hidden" id="gradMetric"><span>Gradient |∇J(θ)|</span><b id="gradVal"></b></div></div></section><footer class="footer"><span>MODEL FIT ↔ PARAMETER SPACE</span><span>AN INTERACTIVE STUDY OF LEARNING</span></footer></main>
+<script>
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const data=[[-1.75,-1.53],[-1.38,-1.55],[-1.04,-1.56],[-.7,-1.36],[-.34,-.79],[0,.02],[.38,.86],[.72,1.37],[1.06,1.55],[1.42,1.58],[1.73,1.53]];
+const optimum=data.reduce((a,[x,y])=>a+x*y,0)/data.reduce((a,[x])=>a+x*x,0);const mse=w=>data.reduce((a,[x,y])=>a+(w*x-y)**2,0)/data.length;
+// A one-dimensional slice through a flexible model. Its plotted loss is the actual sample MSE.
+const neuralFit=(x,t)=>.82*x+.53*Math.sin(1.55*x)+(.8*Math.sin(1.35*t)+.1*t)*(.7+.18*x)+.25*t*Math.cos(1.4*x);
+const loss=t=>data.reduce((sum,[x,y])=>sum+(neuralFit(x,t)-y)**2,0)/data.length;
+const grad=t=>(loss(t+.0001)-loss(t-.0001))/.0002;
+let state=0,model='linear',w=.15,theta=-2.9,initial=theta,history=[],timer=null,mix=0,targetMix=0,last=0;const XMIN=-4,XMAX=4;
+const els={data:$('#dataCanvas'),loss:$('#lossCanvas')};
+function setState(n){state=n;stop();if(window.world3d)window.world3d.activate(n===3);model=n===2?'neural':'linear';targetMix=model==='neural'?1:0;history=[];theta=initial=-2.9;updateUI()}
+function setModel(m){model=m;targetMix=m==='neural'?1:0;updateUI()}
+function stop(){if(timer)clearInterval(timer);timer=null;$('#auto').textContent='Auto-Run'}
+function updateUI(){ $('#stepLabel').textContent=['01 / 04   Empirical Risk & Model','02 / 04   Convex vs. Non-Convex','03 / 04   Gradient Descent','04 / 04   Explore Gradient Descent in 3D'][state];$('#nextState').innerHTML=state===3?'Start again <span aria-hidden="true">↺</span>':'Next section <span aria-hidden="true">→</span>';$$('.subseg button').forEach(b=>{b.classList.toggle('active',b.dataset.model===model);b.setAttribute('aria-pressed',b.dataset.model===model)});
+if(state===3)return;
+const formulas=['min<sub>θ</sub> J(θ) = ¹⁄ₙ ∑ (f<sub>θ</sub>(Xᵢ) − Yᵢ)² &nbsp;&nbsp; · &nbsp;&nbsp; f<sub>θ</sub>(x) = wx + b, &nbsp; θ = (w, b)','J(θ) = ¹⁄ₙ ‖Aθ − y‖² &nbsp;&nbsp; / &nbsp;&nbsp; J(θ) = ¹⁄ₙ ∑ (f<sub>θ</sub>(Xᵢ) − Yᵢ)²','θ<sub>k+1</sub> = θ<sub>k</sub> − α<sub>k</sub> ∇J(θ<sub>k</sub>)'];$('#formula').innerHTML=formulas[state];$('#formulaLabel').textContent=['01 / Empirical risk','02 / Model & landscape','03 / Iterative optimization'][state];$('#take').textContent=['Learning chooses parameters that minimize average prediction error over observed samples.','A linear model yields a convex objective; a neural network can have many local minima.','The gradient points toward steepest local increase; descent moves in the opposite direction.'][state];
+$('#slopeControl').classList.toggle('hidden',state===2||(state===1&&model==='neural'));$('#modelControl').classList.toggle('hidden',state!==1);$('#rateControl').classList.toggle('hidden',state!==2);$('#actions').classList.toggle('hidden',state!==2);$('#iterMetric').classList.toggle('hidden',state!==2);$('#gradMetric').classList.toggle('hidden',state!==2);$('#controlHint').textContent=state===0?'Drag the slope to change the fit and its empirical risk.':state===1?(model==='linear'?'Compare model families and their loss landscapes.':'One-dimensional neural-model slice; loss is computed from the displayed residuals.'):'Click the landscape to choose a starting position.';
+$('#landDesc').textContent=state===2?'Click anywhere in the plot to set θ₀':'A one-dimensional slice of empirical risk';$('#landFoot').innerHTML=state===1?(model==='linear'?'<div class="badge"><span>AᵀA θ = Aᵀy</span><button id="jump">Jump to Exact Minimum</button></div><span>Global minimum guaranteed; unique when columns of A are linearly independent.</span>':'<span>Non-convex landscape — no general closed-form solution.</span>'):state===2?'<span><i class="swatch"></i>Descent direction &nbsp;&nbsp; · &nbsp;&nbsp; Faint dots show previous steps</span>':'<span>With b fixed at 0, the slope traces a convex slice of J(θ).</span>';if($('#jump'))$('#jump').onclick=()=>{w=optimum;$('#slope').value=w;updateNumbers()};updateNumbers()}
+function updateNumbers(){$('#slopeVal').textContent=w.toFixed(2);$('#rateVal').textContent=(+$('#rate').value).toFixed(2);$('#iteration').textContent=history.length;$('#lossVal').textContent=(state===2||state===1&&model==='neural'?loss(theta):mse(w)).toFixed(3);$('#gradVal').textContent=Math.abs(grad(theta)).toFixed(3)}
+function step(){let next=theta-(+$('#rate').value)*grad(theta);history.push(theta);theta=Math.max(XMIN,Math.min(XMAX,next));updateNumbers();if(Math.abs(grad(theta))<.002||history.length>=500)stop()}
+function typeIn(el){const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let nodes=[],n;while(n=walker.nextNode()){nodes.push([n,n.nodeValue]);n.nodeValue=''}let i=0,j=0;function tick(){let budget=4;while(budget--&&i<nodes.length){let [node,str]=nodes[i];j++;node.nodeValue=str.slice(0,j);if(j>=str.length){i++;j=0}}if(i<nodes.length)setTimeout(tick,12)}tick()}
+$('#nextState').onclick=()=>{const changing=$$('.formula>div,.controls>*,#landFoot,#landDesc');changing.forEach(el=>el.classList.add('changing-text'));$('#nextState').disabled=true;setTimeout(()=>{setState((state+1)%4);const typed=[$('#formulaLabel'),$('#formula'),$('#take'),$('#landDesc'),$('#landFoot')];typed.forEach(typeIn);requestAnimationFrame(()=>changing.forEach(el=>el.classList.remove('changing-text')));setTimeout(()=>$('#nextState').disabled=false,650)},200)};$$('.subseg button').forEach(b=>b.onclick=()=>setModel(b.dataset.model));$('#slope').oninput=e=>{w=+e.target.value;updateNumbers()};$('#rate').oninput=updateNumbers;$('#step').onclick=step;$('#auto').onclick=()=>{if(timer)stop();else{timer=setInterval(step,450);$('#auto').textContent='Pause'}};$('#reset').onclick=()=>{stop();theta=initial;history=[];updateNumbers()};
+function setup(c){const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;if(c.width!==Math.round(r.width*d)||c.height!==Math.round(r.height*d)){c.width=Math.round(r.width*d);c.height=Math.round(r.height*d)}let ctx=c.getContext('2d');ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,r.width,r.height);return [ctx,r.width,r.height]}
+function line(c,x1,y1,x2,y2,color,width=1,dash=[]){c.beginPath();c.setLineDash(dash);c.strokeStyle=color;c.lineWidth=width;c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();c.setLineDash([])}function text(c,s,x,y,color='#939087',align='left'){c.fillStyle=color;c.textAlign=align;c.font='10px ui-monospace, monospace';c.fillText(s,x,y)}function circle(c,x,y,r,col){c.beginPath();c.fillStyle=col;c.arc(x,y,r,0,Math.PI*2);c.fill()}
+function bounds(W,H){return {l:43,r:W-22,t:25,b:H-35}}function axes(c,p,xlab,ylab){line(c,p.l,p.b,p.r,p.b,'#dcdad3');line(c,p.l,p.t,p.l,p.b,'#dcdad3');text(c,xlab,p.r,p.b+20,'#939087','right');text(c,ylab,p.l-9,p.t-8,'#939087','left');for(let i=1;i<4;i++){let y=p.t+(p.b-p.t)*i/4;line(c,p.l,y,p.r,y,'#eeece7',.7)}}
+function drawData(){let [c,W,H]=setup(els.data),p=bounds(W,H);axes(c,p,'x','y');let sx=x=>p.l+(x+2.1)/4.2*(p.r-p.l),sy=y=>p.b-(y+2.5)/5*(p.b-p.t);let fit=x=>{let linear=w*x;let neural=neuralFit(x,theta);return linear*(1-mix)+neural*mix};c.save();c.beginPath();c.rect(p.l,p.t,p.r-p.l,p.b-p.t);c.clip();data.forEach(([x,y])=>line(c,sx(x),sy(y),sx(x),sy(fit(x)),'#c9b9af',1,[3,4]));c.beginPath();for(let i=0;i<=200;i++){let x=-2.1+4.2*i/200;i?c.lineTo(sx(x),sy(fit(x))):c.moveTo(sx(x),sy(fit(x)))}c.strokeStyle='#d97757';c.lineWidth=2.4;c.stroke();data.forEach(([x,y])=>circle(c,sx(x),sy(y),3.5,'#899ba2'));c.restore();text(c,'fθ(x)',p.r-6,Math.max(p.t+12,Math.min(p.b-7,sy(fit(1.8))-10)),'#b66a50','right')}
+function arrow(c,x,y,dx,dy,color,label){let norm=Math.hypot(dx,dy)||1;dx/=norm;dy/=norm;let len=47,ex=x+dx*len,ey=y+dy*len;line(c,x,y,ex,ey,color,1.4);line(c,ex,ey,ex-dx*7-dy*4,ey-dy*7+dx*4,color,1.4);line(c,ex,ey,ex-dx*7+dy*4,ey-dy*7-dx*4,color,1.4);text(c,label,ex+(dx>0?6:-6),ey-7,color,dx>0?'left':'right')}
+function drawLoss(){let [c,W,H]=setup(els.loss),p=bounds(W,H);axes(c,p,'θ','J(θ)');let sx=x=>p.l+(x-XMIN)/(XMAX-XMIN)*(p.r-p.l);let lin=t=>mse(t);let yMax=13*(1-mix)+.72*mix;let sy=y=>p.b-y/yMax*(p.b-p.t);let f=t=>lin(t)*(1-mix)+loss(t)*mix;c.save();c.beginPath();c.rect(p.l,p.t,p.r-p.l,p.b-p.t);c.clip();c.beginPath();for(let i=0;i<=400;i++){let t=XMIN+(XMAX-XMIN)*i/400;i?c.lineTo(sx(t),sy(f(t))):c.moveTo(sx(t),sy(f(t)))}c.strokeStyle='#d97757';c.lineWidth=2.2;c.stroke();let t=state===2||model==='neural'?theta:w,x=sx(t),y=sy(f(t));if(state===2){history.forEach(v=>circle(c,sx(v),sy(loss(v)),3,'#e7c8b8'));let g=grad(theta),dx=(p.r-p.l)/8,dy=-g*(p.b-p.t)/.72;let d=Math.hypot(dx,dy);line(c,x-dx/d*60,y-dy/d*60,x+dx/d*60,y+dy/d*60,'#bdb9b0',1,[4,4]);if(Math.abs(g)>.002){let sign=Math.sign(g);arrow(c,x,y,dx*sign,dy*sign,'#a5a29a','+∇J');arrow(c,x,y,-dx*sign,-dy*sign,'#d97757','−α∇J')}}circle(c,x,y,7,'#fff');circle(c,x,y,4.5,'#d97757');c.restore();text(c,`θ = ${t.toFixed(2)}   J = ${f(t).toFixed(3)}`,p.r-3,p.t+10,'#817b72','right')}
+els.loss.addEventListener('pointerdown',e=>{if(state!==2)return;const r=els.loss.getBoundingClientRect(),p=bounds(r.width,r.height);theta=initial=Math.max(XMIN,Math.min(XMAX,XMIN+(e.clientX-r.left-p.l)/(p.r-p.l)*(XMAX-XMIN)));history=[];stop();updateNumbers()});
+function frame(t){let dt=Math.min(40,t-last||16);last=t;mix+=(targetMix-mix)*Math.min(1,dt/220);if(state!==3){drawData();drawLoss();}requestAnimationFrame(frame)}updateUI();requestAnimationFrame(frame);
+</script><style>
+.world{position:relative;flex:1;min-height:620px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:radial-gradient(ellipse at 50% 55%,#f8e9dc,#faf9f6 72%)}
+.world canvas{position:absolute;inset:0;cursor:grab}.world canvas:active{cursor:grabbing}.world-top{position:absolute;top:20px;left:22px;right:22px;display:flex;justify-content:space-between;gap:15px;pointer-events:none}.world-top h2{font-size:17px;font-weight:500;margin:0 0 8px}.world-top .equation{font-size:17px}.world-top button{pointer-events:auto}.world-bottom{position:absolute;bottom:0;left:0;right:0;background:#faf9f6ed;border-top:1px solid #e7d9cb;padding:14px 20px;backdrop-filter:blur(10px)}.world-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.world .ball-tab{border-color:#dfc9ba;display:flex;gap:8px;align-items:center}.ball-tab.active{box-shadow:0 0 0 2px var(--accent);background:#fcf5f0}.ball-icon{width:10px;height:10px;border-radius:50%;display:inline-block}.world-stat{margin-top:13px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:11px ui-monospace,monospace;color:#7c7267}.world-note{font-size:11px;line-height:1.6;color:#8a7768;margin-top:9px}.world input{width:115px;accent-color:var(--accent)}.world label{font-size:11px}.world-help{position:absolute;top:83px;left:22px;color:#928579;font-size:11px;line-height:1.8;pointer-events:none}.world .btn{padding:9px 11px}.world-status{position:absolute;right:22px;top:85px;text-align:right;font-size:11px;line-height:1.9;color:#877568;pointer-events:none}@media(max-width:700px){.world{min-height:760px}.world-top{left:14px;right:14px}.world-top .equation{font-size:13px}.world-bottom{padding:12px}.world-help{top:105px;left:14px}.world-status{top:155px;right:14px}.world-toolbar{gap:8px}}
+</style>
+<script>
+(()=>{
+const root=document.createElement('section');root.className='world hidden';root.innerHTML=`
+<canvas id="worldCanvas" tabindex="0" aria-label="Interactive 3D loss surface with three gradient-descent balls. Drag to orbit, shift-drag to pan, scroll to zoom. Arrow keys orbit; WASD pan."></canvas>
+<div class="world-top"><div><div class="eyebrow">04 / Optimization</div><h2>Gradient Descent · 3D</h2></div><button class="btn" id="overview3">↗ Overview</button></div>
+
+
+<div class="world-bottom"><div class="world-toolbar" id="ballTabs3"></div>
+<div class="world-toolbar" style="margin-top:13px"><label for="alpha3">Learning rate α</label><input id="alpha3" type="range" min="0.015" max="0.8" step="0.005" value="0.04"><span class="mono" id="alphaValue3"></span><button class="btn" id="low3">Low · 0.04</button><button class="btn" id="high3">High · 0.65</button><button class="btn primary" id="run3">Run selected</button><button class="btn" id="step3">Step +1</button><button class="btn" id="reset3">Reset selected</button><button class="btn" id="resetAll3">Reset all</button></div>
+<div class="world-stat" id="stats3" aria-live="polite"></div>
+</div>`;
+document.querySelector('.footer').before(root);
+const q=s=>root.querySelector(s),canvas=q('canvas'),ctx=canvas.getContext('2d');
+// A real smooth objective: three Gaussian wells + a quadratic confinement.
+// The narrow central well is the global minimum. No rate-based routing or snapped destinations.
+function objective(x,y){return 2.1+.06*x*x+.24*y*y-2*Math.exp(-((x/.48)**2))-.8*Math.exp(-(((x-2)/.85)**2))-.8*Math.exp(-(((x+2)/.85)**2))}
+function gradient(x,y){return [.12*x+4*x/(.48**2)*Math.exp(-((x/.48)**2))+1.6*(x-2)/(.85**2)*Math.exp(-(((x-2)/.85)**2))+1.6*(x+2)/(.85**2)*Math.exp(-(((x+2)/.85)**2)),.48*y]}
+const starts=[[-2.8,1.45],[2.8,-1.35],[.48,.85]],colors=['#a65336','#ed9b55','#6c8587'];
+const balls=starts.map((p,i)=>({x:p[0],y:p[1],from:[...p],progress:1,path:[[...p]],alpha:.04,k:0,running:false,done:false,color:colors[i]}));
+let selected=2,active=false,lastTime=0,elapsed=0,W=0,H=0,drag=null,follow=false;
+const keys=new Set();
+const camera={yaw:-.65,pitch:.65,zoom:1,cx:0,cy:0},target={...camera};
+balls.forEach((b,i)=>{const btn=document.createElement('button');btn.className='btn ball-tab';btn.innerHTML=`<i class="ball-icon" style="background:${b.color}"></i>Ball ${i+1}`;btn.onclick=()=>{selected=i;follow=true;target.cx=b.x;target.cy=b.y;target.zoom=1.45;sync()};q('#ballTabs3').append(btn)});
+function status(b){return b.done?(Math.abs(b.x)<.2?'GLOBAL MINIMUM':'LOCAL MINIMUM'):b.running?'descending':b.k?'paused':'ready'}
+function sync(){const b=balls[selected];q('#alpha3').value=b.alpha;q('#alphaValue3').textContent=b.alpha.toFixed(3);q('#run3').textContent=b.running?'Pause selected':'Run selected';q('#run3').disabled=b.done;q('#step3').disabled=b.done;q('#stats3').textContent=`● ${selected+1}   |   k = ${b.k}   |   (x, y) = (${b.x.toFixed(3)}, ${b.y.toFixed(3)})   |   J = ${objective(b.x,b.y).toFixed(4)}   |   ‖∇J‖ = ${Math.hypot(...gradient(b.x,b.y)).toFixed(4)}`;
+[...q('#ballTabs3').children].forEach((el,i)=>{el.classList.toggle('active',selected===i);el.setAttribute('aria-pressed',selected===i)});}
+function advance(b){if(b.done||b.progress<1)return;const g=gradient(b.x,b.y);b.from=[b.x,b.y];b.x-=b.alpha*g[0];b.y-=b.alpha*g[1];b.k++;b.progress=0;b.path.push([b.x,b.y]);if(Math.hypot(...gradient(b.x,b.y))<.002){b.done=true;b.running=false}if(b.k>=2000)b.running=false;sync()}
+function reset(b){const p=starts[balls.indexOf(b)];Object.assign(b,{x:p[0],y:p[1],from:[...p],progress:1,path:[[...p]],k:0,running:false,done:false});sync()}
+q('#run3').onclick=()=>{const b=balls[selected];b.running=!b.running;sync()};q('#step3').onclick=()=>{balls[selected].running=false;advance(balls[selected]);sync()};q('#reset3').onclick=()=>reset(balls[selected]);q('#resetAll3').onclick=()=>balls.forEach(reset);
+function rate(a){balls[selected].alpha=a;sync()}q('#alpha3').oninput=e=>rate(+e.target.value);q('#low3').onclick=()=>rate(.04);q('#high3').onclick=()=>rate(.65);
+q('#overview3').onclick=()=>{follow=false;Object.assign(target,{yaw:-.65,pitch:.65,zoom:1,cx:0,cy:0})};
+const mesh=[],N=76,M=44;for(let i=0;i<N;i++)for(let j=0;j<M;j++){let x=-3.5+7*i/N,y=-2.5+5*j/M,dx=7/N,dy=5/M;const pts=[[x,y],[x+dx,y],[x+dx,y+dy],[x,y+dy]].map(([a,b])=>[a,b,objective(a,b)]);const g=gradient(x+dx/2,y+dy/2);mesh.push({pts,shade:Math.max(0,Math.min(1,.52+(.3*g[0]-.5*g[1])/(1+Math.hypot(...g))))})}
+const BASE=-1.15, walls=[];
+// Close all four edges down to a shared foundation; subdivide for correct depth occlusion.
+function wall(a,b,n,nx,ny){for(let i=0;i<n;i++){const p=[a[0]+(b[0]-a[0])*i/n,a[1]+(b[1]-a[1])*i/n],q=[a[0]+(b[0]-a[0])*(i+1)/n,a[1]+(b[1]-a[1])*(i+1)/n];const hp=objective(...p),hq=objective(...q);for(let j=0;j<24;j++){const lo=j/24,hi=(j+1)/24;walls.push({pts:[[...p,BASE+(hp-BASE)*lo],[...q,BASE+(hq-BASE)*lo],[...q,BASE+(hq-BASE)*hi],[...p,BASE+(hp-BASE)*hi]],color:`hsl(24 52% ${43+14*hi+7*(-.45*nx-.65*ny)}%)`})}}}
+wall([-3.5,-2.5],[3.5,-2.5],N,0,-1);wall([3.5,-2.5],[3.5,2.5],M,1,0);wall([3.5,2.5],[-3.5,2.5],N,0,1);wall([-3.5,2.5],[-3.5,-2.5],M,-1,0);
+function project(x,y,z){x-=camera.cx;y-=camera.cy;const u=x*Math.cos(camera.yaw)-y*Math.sin(camera.yaw),v=x*Math.sin(camera.yaw)+y*Math.cos(camera.yaw);const depth=v*Math.cos(camera.pitch)+z*Math.sin(camera.pitch);const scale=Math.min(W/8.9,(H-145)/8.2)*camera.zoom;return {x:W*.5+u*scale,y:(H-130)*.55+(v*Math.sin(camera.pitch)-(z-1)*Math.cos(camera.pitch))*scale,d:depth}}
+function poly(points,fill,stroke){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=.35;ctx.stroke()}}
+function render(t){requestAnimationFrame(render);if(!active){lastTime=t;return}const dt=Math.min(t-lastTime||16,50);lastTime=t;elapsed+=dt;balls.forEach(b=>{b.progress=Math.min(1,b.progress+dt/300)});if(elapsed>380){balls.forEach(b=>{if(b.running)advance(b)});elapsed=0}
+const forward=(keys.has('KeyW')?1:0)-(keys.has('KeyS')?1:0),right=(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0);
+if(forward||right){follow=false;const speed=dt*.003/target.zoom/Math.max(1,Math.hypot(forward,right));target.cx+=(right*Math.cos(target.yaw)-forward*Math.sin(target.yaw))*speed;target.cy+=(-right*Math.sin(target.yaw)-forward*Math.cos(target.yaw))*speed;}
+if(follow){target.cx=balls[selected].x;target.cy=balls[selected].y}for(const k in camera)camera[k]+=(target[k]-camera[k])*.09;
+const r=canvas.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;if(canvas.width!==Math.round(W*d)||canvas.height!==Math.round(H*d)){canvas.width=Math.round(W*d);canvas.height=Math.round(H*d)}ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,W,H);
+// Warm ground shadow, then depth-sorted surface facets and attached trails.
+ctx.save();ctx.filter='blur(23px)';poly([[-3.6,-2.6],[3.6,-2.6],[3.6,2.6],[-3.6,2.6]].map(p=>project(...p,BASE-.08)),'#c6804a38');ctx.restore();
+const items=mesh.map(f=>{const p=f.pts.map(v=>project(...v));return {d:p.reduce((s,a)=>s+a.d,0)/4,draw:()=>poly(p,`hsl(25 57% ${55+f.shade*30}%)`,'#98532922')}});
+poly([[-3.5,-2.5],[3.5,-2.5],[3.5,2.5],[-3.5,2.5]].map(p=>project(...p,BASE)),'#9d5837');
+for(const f of walls){const p=f.pts.map(v=>project(...v));items.push({d:p.reduce((s,a)=>s+a.d,0)/4,draw:()=>poly(p,f.color,f.color)})}
+balls.forEach((b,bi)=>{for(let k=1;k<b.path.length;k++){const a=b.path[k-1],end=b.path[k];const count=8;for(let j=0;j<count;j++){if(k===b.path.length-1&&j/count>b.progress)break;let u=j/count,v=Math.min((j+1)/count,k===b.path.length-1?b.progress:1);const p=[a[0]+(end[0]-a[0])*u,a[1]+(end[1]-a[1])*u],n=[a[0]+(end[0]-a[0])*v,a[1]+(end[1]-a[1])*v];const s=project(...p,objective(...p)+.025),e=project(...n,objective(...n)+.025);items.push({d:(s.d+e.d)/2+.045,draw:()=>{ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.lineTo(e.x,e.y);ctx.strokeStyle=b.color;ctx.lineWidth=2;ctx.stroke()}})}}
+let p=b.progress*b.progress*(3-2*b.progress),x=b.from[0]+(b.x-b.from[0])*p,y=b.from[1]+(b.y-b.from[1])*p;const s=project(x,y,objective(x,y)+.09);items.push({d:s.d+.15,draw:()=>{const radius=(bi===selected?10:8)*Math.sqrt(camera.zoom);ctx.save();ctx.shadowColor='#9c4f3e88';ctx.shadowBlur=9;ctx.shadowOffsetY=5;const grd=ctx.createRadialGradient(s.x-radius*.35,s.y-radius*.4,1,s.x,s.y,radius);grd.addColorStop(0,'#fff7ec');grd.addColorStop(.35,b.color);grd.addColorStop(1,'#663c2c');ctx.fillStyle=grd;ctx.beginPath();ctx.arc(s.x,s.y,radius,0,Math.PI*2);ctx.fill();ctx.restore();if(bi===selected){ctx.strokeStyle='#fff9ef';ctx.lineWidth=1.7;ctx.beginPath();ctx.arc(s.x,s.y,radius+3,0,Math.PI*2);ctx.stroke()}ctx.fillStyle='#49372b';ctx.font='bold 11px ui-monospace, monospace';ctx.textAlign='center';ctx.fillText(bi+1,s.x,s.y-radius-9)}})});
+items.sort((a,b)=>a.d-b.d).forEach(it=>it.draw());
+
+}
+canvas.oncontextmenu=e=>e.preventDefault();canvas.onpointerdown=e=>{canvas.focus();canvas.setPointerCapture(e.pointerId);follow=false;drag={x:e.clientX,y:e.clientY,pan:e.shiftKey||e.button===2}};canvas.onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(drag.pan){target.cx-=(dx*Math.cos(target.yaw)+dy*Math.sin(target.yaw))*.009/target.zoom;target.cy+=(dx*Math.sin(target.yaw)-dy*Math.cos(target.yaw))*.009/target.zoom}else{target.yaw+=dx*.008;target.pitch=Math.max(.18,Math.min(1.35,target.pitch+dy*.006))}drag.x=e.clientX;drag.y=e.clientY};canvas.onpointerup=canvas.onpointercancel=()=>drag=null;
+canvas.addEventListener('wheel',e=>{e.preventDefault();target.zoom=Math.max(.65,Math.min(2.8,target.zoom*Math.exp(-e.deltaY*.001)))},{passive:false});
+window.addEventListener('keydown',e=>{if(!active||e.ctrlKey||e.metaKey||e.altKey||e.target.matches('textarea,[contenteditable="true"],input:not([type="range"])'))return;if(['KeyW','KeyA','KeyS','KeyD'].includes(e.code)){e.preventDefault();keys.add(e.code);return}if(e.target.matches('input'))return;const k=e.key.toLowerCase();if(!['arrowleft','arrowright','arrowup','arrowdown','+','-','='].includes(k))return;e.preventDefault();follow=false;if(k==='arrowleft')target.yaw-=.12;if(k==='arrowright')target.yaw+=.12;if(k==='arrowup')target.pitch=Math.min(1.35,target.pitch+.08);if(k==='arrowdown')target.pitch=Math.max(.18,target.pitch-.08);if(k==='+'||k==='=')target.zoom=Math.min(2.8,target.zoom*1.1);if(k==='-')target.zoom=Math.max(.65,target.zoom/1.1)});
+window.addEventListener('keyup',e=>keys.delete(e.code));window.addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>keys.clear());
+window.world3d={activate(on){active=on;keys.clear();document.querySelector('.footer').classList.toggle('hidden',on);root.classList.toggle('hidden',!on);document.querySelectorAll('.formula,.panels,.controls').forEach(el=>el.classList.toggle('hidden',on));if(!on)balls.forEach(b=>b.running=false);sync()},objective,gradient,balls};sync();requestAnimationFrame(render);
+})();
+</script>
+
+<script>
+(()=>{
+const seq=[{s:'t0',l:'Overview'},{s:'p1a',l:'Part 1 · Empirical risk'},{s:'p1b',l:'Part 1 · Parametrization'},{d:0,l:'Lab · Empirical risk'},{s:'p1c',l:'Part 1 · Convex vs non-convex'},{d:1,l:'Lab · Two landscapes'},{s:'p1d',l:'Part 1 · Why iterate'},{s:'p2a',l:'Part 2 · The iteration'},{d:2,l:'Lab · Gradient descent'},{s:'p2b',l:'Part 2 · Cheap gradients'},{s:'p2c',l:'Part 2 · Backpropagation'},{s:'p2d',l:'Part 2 · Numerical levers'},{s:'p3a',l:'Part 3 · Descent lemma'},{s:'p3b',l:'Part 3 · Convex vs non-convex'},{d:3,l:'Lab · Gradient descent in 3D'},{s:'p4a',l:'Part 4 · Algorithm selects'},{s:'p4b',l:'Part 4 · Generalization'},{s:'p5',l:'Part 5 · Summary'}];
+let cur=0;const bar=document.getElementById('dbar');
+seq.forEach((e,i)=>{const b=document.createElement('i');b.title=e.l;b.onclick=()=>show(i);bar.append(b)});
+function show(i){cur=Math.max(0,Math.min(seq.length-1,i));const e=seq[cur],lab=e.d!==undefined;
+document.querySelectorAll('.ps').forEach(x=>x.classList.toggle('hidden',x.id!==e.s));
+document.getElementById('demo').classList.toggle('hidden',!lab);
+if(lab){setState(e.d)}else{stop();if(window.world3d)window.world3d.activate(false)}
+document.querySelector('#demo .topline span:last-child').textContent=String(cur+1).padStart(2,'0')+' / '+seq.length;
+document.getElementById('dlab').textContent=String(cur+1).padStart(2,'0')+' / '+seq.length+'  ·  '+e.l;
+[...bar.children].forEach((b,k)=>{b.className=k===cur?'cur':k<cur?'on':''});
+document.getElementById('dprev').disabled=cur===0;document.getElementById('dnext').disabled=cur===seq.length-1;window.scrollTo(0,0)}
+document.getElementById('dprev').onclick=()=>show(cur-1);document.getElementById('dnext').onclick=()=>show(cur+1);
+document.querySelectorAll('[data-go]').forEach(el=>el.onclick=()=>show(+el.dataset.go));
+window.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.matches('input,textarea'))return;const in3d=seq[cur].d===3;
+if(e.key==='PageDown'||(!in3d&&(e.key==='ArrowRight'||e.key===' '))){e.preventDefault();show(cur+1)}
+else if(e.key==='PageUp'||(!in3d&&e.key==='ArrowLeft')){e.preventDefault();show(cur-1)}});
+show(0);
+})();
+</script></body></html>
