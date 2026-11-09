@@ -46,27 +46,9 @@ bridge b{color:var(--accent);font-weight:400;margin-right:6px}
 </style></head><body><div id="deck">
 
 <!-- ============ TITLE & ROADMAP ============ -->
-<section class="ps" id="t0">
-<div class="topline"><span>Numerical Analysis · Machine Learning</span><span>Overview</span></div>
-<header class="header"><div>
-<div class="eyebrow">Full presentation</div>
-<h1 class="big">Gradient Descent and Neural-Network Regression</h1>
-<p class="lead">Viewed through the lens of numerical analysis: how a statistical problem becomes an iteration, and how that iteration shapes the function we learn.</p>
-</div></header>
-<div class="pb pb5">
-<div class="card go" data-go="1"><div class="cap">Part 1</div><h2>Regression as a numerical problem</h2><div class="desc">From expectation to finite sum, and why we must iterate.</div></div>
-<div class="card go" data-go="7"><div class="cap">Part 2</div><h2>Gradient descent as a method</h2><div class="desc">The iteration, backpropagation, step size and conditioning.</div></div>
-<div class="card go" data-go="12"><div class="cap">Part 3</div><h2>Convergence</h2><div class="desc">Smoothness, safe step sizes, convex and non-convex guarantees.</div></div>
-<div class="card go" data-go="15"><div class="cap">Part 4</div><h2>Effect on the learned function</h2><div class="desc">Implicit bias, early stopping and generalization.</div></div>
-<div class="card go" data-go="17"><div class="cap">Part 5</div><h2>Summary</h2><div class="desc">The whole argument on one slide.</div></div>
-</div>
-<kp><b>Storyline</b>A statistical goal becomes a loss function → the loss is non-convex, so we iterate → the iteration needs cheap gradients and a safe step size → the iteration also decides which function we learn.</kp>
-<bridge><b>Start →</b> Part 1: from a statistical target to a numerical problem.</bridge>
-</section>
-
 <!-- ============ PART 1 ============ -->
 <section class="ps" id="p1a">
-<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>1 / 4</span></div>
+<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>1 / 2</span></div>
 <header class="header"><div>
 <div class="eyebrow">From statistics to a finite sum</div>
 <h1>The Regression Problem and Empirical Risk</h1>
@@ -86,35 +68,11 @@ bridge b{color:var(--accent);font-weight:400;margin-right:6px}
 </div>
 <kp><b>Key point</b>The expectation is replaced by a quadrature (Monte Carlo) approximation. This introduces a statistical error that is controlled by the sample size N.</kp>
 </div>
-<bridge><b>Next →</b> minimizing over all functions is infeasible, so we restrict the search to a parametric family.</bridge>
-</section>
-
-<section class="ps" id="p1b">
-<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>2 / 4</span></div>
-<header class="header"><div>
-<div class="eyebrow">Learning becomes optimization</div>
-<h1>Restricting to a Parametric Family</h1>
-<p class="lead">Once the model is a function of finitely many parameters, learning turns into an optimization problem over θ.</p>
-</div></header>
-<div class="pb">
-<div class="card">
-<div class="cap">Step 1 · Parametrize</div>
-<p>Minimizing over all functions is numerically infeasible. We restrict the search to a family indexed by θ:</p>
-<eq>f<sub>θ</sub> : ℝ<sup>d</sup> → ℝ,  θ ∈ ℝ<sup>p</sup></eq>
-</div>
-<div class="card">
-<div class="cap">Step 2 · Substitute into the empirical risk</div>
-<eq class="box">J(θ) = <fr><i>1</i><i>N</i></fr> ∑<sub>i=1</sub><sup>N</sup> ( f<sub>θ</sub>(Xᵢ) − Yᵢ )²</eq>
-<p>With residuals rᵢ(θ) = f<sub>θ</sub>(Xᵢ) − Yᵢ, this is a squared norm:</p>
-<eq>J(θ) = <fr><i>1</i><i>N</i></fr> ‖ r(θ) ‖<sub>2</sub>²</eq>
-</div>
-<kp><b>Key point</b>Regression with a parametric model is a nonlinear least-squares problem in θ.</kp>
-</div>
-<bridge><b>Try it →</b> the residuals are the dashed lines in the first lab. Drag the slope and watch them change.</bridge>
+<bridge><b>Try it →</b> drag the slope in the lab and watch the prediction error change.</bridge>
 </section>
 
 <section class="ps" id="p1c">
-<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>3 / 4</span></div>
+<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>2 / 2</span></div>
 <header class="header"><div>
 <div class="eyebrow">Two regimes</div>
 <h1>Linear Model vs Neural Network</h1>
@@ -143,38 +101,9 @@ bridge b{color:var(--accent);font-weight:400;margin-right:6px}
 <bridge><b>Try it →</b> in the lab, switch between the linear model and the neural network and compare their landscapes.</bridge>
 </section>
 
-<section class="ps" id="p1d">
-<div class="topline"><span>Part 1 · Regression as a numerical problem</span><span>4 / 4</span></div>
-<header class="header"><div>
-<div class="eyebrow">The need for iteration</div>
-<h1>Why We Must Solve Iteratively</h1>
-<p class="lead">For a neural network there is no formula to evaluate. We have to walk toward a minimum step by step.</p>
-</div></header>
-<div class="pb">
-<div class="card">
-<div class="cap">Properties of the neural-network loss</div>
-<ul>
-<li>J(θ) is not quadratic.</li>
-<li>∇²J(θ) is not constant and may have negative eigenvalues (saddle points).</li>
-<li>Several local minima may exist.</li>
-<li>No closed-form solution: the normal equations do not apply.</li>
-</ul>
-</div>
-<div class="card">
-<div class="cap">Problem and method</div>
-<p>The problem to solve:</p>
-<eq>min<sub>θ ∈ ℝ<sup>p</sup></sub> J(θ) = <fr><i>1</i><i>N</i></fr> ∑<sub>i=1</sub><sup>N</sup> ( f<sub>θ</sub>(Xᵢ) − Yᵢ )²</eq>
-<p>The numerical method, gradient descent:</p>
-<eq class="box">θ<sub>k+1</sub> = θ<sub>k</sub> − α<sub>k</sub> ∇J(θ<sub>k</sub>)</eq>
-</div>
-<kp><b>Key point</b>Non-convexity forces an iterative method. Gradient descent is the steepest descent method of numerical analysis, now applied in very high dimension.</kp>
-</div>
-<bridge><b>Next →</b> Part 2: the iteration itself, how to compute the gradient cheaply, and what can go wrong.</bridge>
-</section>
-
 <!-- ============ PART 2 ============ -->
 <section class="ps" id="p2a">
-<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>1 / 4</span></div>
+<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>1 / 3</span></div>
 <header class="header"><div>
 <div class="eyebrow">The iteration</div>
 <h1>Steepest Descent for the Loss Function</h1>
@@ -205,7 +134,7 @@ bridge b{color:var(--accent);font-weight:400;margin-right:6px}
 </section>
 
 <section class="ps" id="p2b">
-<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>2 / 4</span></div>
+<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>2 / 3</span></div>
 <header class="header"><div>
 <div class="eyebrow">Cost of the gradient</div>
 <h1>The Gradient Must Be Cheap</h1>
@@ -228,38 +157,11 @@ bridge b{color:var(--accent);font-weight:400;margin-right:6px}
 </div>
 <kp><b>Key point</b>Backpropagation is not a new mathematical idea. It is the chain rule, organized for computational efficiency. That is what makes gradient descent feasible at scale.</kp>
 </div>
-<bridge><b>Next →</b> what exactly is this organization of the chain rule?</bridge>
-</section>
-
-<section class="ps" id="p2c">
-<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>3 / 4</span></div>
-<header class="header"><div>
-<div class="eyebrow">Backpropagation</div>
-<h1>Forward Pass and Backward Pass</h1>
-<p class="lead">The network is a composition of layers. We evaluate it forward, store intermediate values, and then apply the chain rule backward.</p>
-</div></header>
-<div class="pb">
-<div class="card">
-<div class="cap">Forward pass</div>
-<eq>f<sub>θ</sub>(x) = f<sup>(L)</sup>( f<sup>(L−1)</sup>( ⋯ f<sup>(1)</sup>(x) ⋯ ) )</eq>
-<p>Compute and store the activations layer by layer:</p>
-<eq>a<sup>(0)</sup> = x,  z<sup>(l)</sup> = W<sup>(l)</sup>a<sup>(l−1)</sup> + b<sup>(l)</sup>,  a<sup>(l)</sup> = σ(z<sup>(l)</sup>)</eq>
-</div>
-<div class="card">
-<div class="cap">Backward pass</div>
-<p>Define the layer error δ<sup>(l)</sup> = ∂J/∂z<sup>(l)</sup>. It is computed from the output back to the input:</p>
-<eq>δ<sup>(L)</sup> = ∇<sub>a<sup>(L)</sup></sub>J ⊙ σ′(z<sup>(L)</sup>)</eq>
-<eq>δ<sup>(l)</sup> = (W<sup>(l+1)</sup>)ᵀ δ<sup>(l+1)</sup> ⊙ σ′(z<sup>(l)</sup>)</eq>
-<p>Parameter gradients:</p>
-<eq class="box">∂J/∂W<sup>(l)</sup> = δ<sup>(l)</sup>(a<sup>(l−1)</sup>)ᵀ,  ∂J/∂b<sup>(l)</sup> = δ<sup>(l)</sup></eq>
-</div>
-<kp><b>Key point</b>Every step is the chain rule. The backward recursion is a sequence of products with transposed weight matrices. This is where numerical issues, such as conditioning and growth or decay of magnitudes, enter.</kp>
-</div>
-<bridge><b>Next →</b> those numerical issues, and the role of the step size α.</bridge>
+<bridge><b>Next →</b> how step size and numerical stability affect learning.</bridge>
 </section>
 
 <section class="ps" id="p2d">
-<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>4 / 4</span></div>
+<div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>3 / 3</span></div>
 <header class="header"><div>
 <div class="eyebrow">Numerical levers</div>
 <h1>The Two Levers: Step Size and Jacobians</h1>
@@ -421,19 +323,19 @@ bridge b{color:var(--accent);font-weight:400;margin-right:6px}
 <h1>Gradient Descent Through the Lens of Numerical Analysis</h1>
 </div></header>
 <div class="pb">
-<div class="card go" data-go="1"><div class="cap">1 · Regression as a numerical problem</div>
+<div class="card go" data-go="0"><div class="cap">1 · Regression as a numerical problem</div>
 <eq>min<sub>θ</sub> J(θ) = <fr><i>1</i><i>N</i></fr> ∑ ( f<sub>θ</sub>(Xᵢ) − Yᵢ )²</eq>
 <div class="desc">A nonlinear least-squares problem: convex for linear models, non-convex for neural networks.</div></div>
-<div class="card go" data-go="7"><div class="cap">2 · The method</div>
+<div class="card go" data-go="4"><div class="cap">2 · The method</div>
 <eq>θ<sub>k+1</sub> = θ<sub>k</sub> − α<sub>k</sub> ∇J(θ<sub>k</sub>)</eq>
 <div class="desc">The gradient comes from backpropagation, at a cost of about one evaluation of J, versus O(p) for finite differences.</div></div>
-<div class="card go" data-go="12"><div class="cap">3 · Convergence</div>
+<div class="card go" data-go="8"><div class="cap">3 · Convergence</div>
 <ul>
 <li>L-smoothness gives a safe step, 0 &lt; α &lt; 2/L.</li>
 <li>Convex: global minimum, with k ∼ κ · log(1/ε).</li>
 <li>Non-convex: a stationary point, not necessarily the global minimum.</li>
 </ul></div>
-<div class="card go" data-go="15"><div class="cap">4 · Effect on the learned function</div>
+<div class="card go" data-go="11"><div class="cap">4 · Effect on the learned function</div>
 <div class="desc" style="font-size:13px;line-height:1.6">The choices (θ₀, α, K) select which function f<sub>θ</sub> is learned. The algorithm carries an implicit bias toward smooth, low-norm solutions, and early stopping acts as regularization.</div></div>
 <kp><b>In one line</b>Gradient descent is steepest descent applied to a high-dimensional, non-convex objective. Its numerical behavior, namely conditioning, stability and stopping, directly shapes the regression function it produces.</kp>
 </div>
@@ -540,7 +442,7 @@ window.world3d={activate(on){active=on;keys.clear();document.querySelector('.foo
 
 <script>
 (()=>{
-const seq=[{s:'t0',l:'Overview'},{s:'p1a',l:'Part 1 · Empirical risk'},{s:'p1b',l:'Part 1 · Parametrization'},{d:0,l:'Lab · Empirical risk'},{s:'p1c',l:'Part 1 · Convex vs non-convex'},{d:1,l:'Lab · Two landscapes'},{s:'p1d',l:'Part 1 · Why iterate'},{s:'p2a',l:'Part 2 · The iteration'},{d:2,l:'Lab · Gradient descent'},{s:'p2b',l:'Part 2 · Cheap gradients'},{s:'p2c',l:'Part 2 · Backpropagation'},{s:'p2d',l:'Part 2 · Numerical levers'},{s:'p3a',l:'Part 3 · Descent lemma'},{s:'p3b',l:'Part 3 · Convex vs non-convex'},{d:3,l:'Lab · Gradient descent in 3D'},{s:'p4a',l:'Part 4 · Algorithm selects'},{s:'p4b',l:'Part 4 · Generalization'},{s:'p5',l:'Part 5 · Summary'}];
+const seq=[{s:'p1a',l:'Part 1 · Empirical risk'},{d:0,l:'Lab · Empirical risk'},{s:'p1c',l:'Part 1 · Convex vs non-convex'},{d:1,l:'Lab · Two landscapes'},{s:'p2a',l:'Part 2 · The iteration'},{d:2,l:'Lab · Gradient descent'},{s:'p2b',l:'Part 2 · Cheap gradients'},{s:'p2d',l:'Part 2 · Numerical levers'},{s:'p3a',l:'Part 3 · Descent lemma'},{s:'p3b',l:'Part 3 · Convex vs non-convex'},{d:3,l:'Lab · Gradient descent in 3D'},{s:'p4a',l:'Part 4 · Algorithm selects'},{s:'p4b',l:'Part 4 · Generalization'},{s:'p5',l:'Part 5 · Summary'}];
 let cur=0;const bar=document.getElementById('dbar');
 seq.forEach((e,i)=>{const b=document.createElement('i');b.title=e.l;b.onclick=()=>show(i);bar.append(b)});
 function show(i){cur=Math.max(0,Math.min(seq.length-1,i));const e=seq[cur],lab=e.d!==undefined;
