@@ -326,16 +326,16 @@ bridge b{color:var(--accent);font-weight:400;margin-right:6px}
 <div class="card go" data-go="0"><div class="cap">1 · Regression as a numerical problem</div>
 <eq>min<sub>θ</sub> J(θ) = <fr><i>1</i><i>N</i></fr> ∑ ( f<sub>θ</sub>(Xᵢ) − Yᵢ )²</eq>
 <div class="desc">A nonlinear least-squares problem: convex for linear models, non-convex for neural networks.</div></div>
-<div class="card go" data-go="4"><div class="cap">2 · The method</div>
+<div class="card go" data-go="2"><div class="cap">2 · The method</div>
 <eq>θ<sub>k+1</sub> = θ<sub>k</sub> − α<sub>k</sub> ∇J(θ<sub>k</sub>)</eq>
 <div class="desc">The gradient comes from backpropagation, at a cost of about one evaluation of J, versus O(p) for finite differences.</div></div>
-<div class="card go" data-go="8"><div class="cap">3 · Convergence</div>
+<div class="card go" data-go="6"><div class="cap">3 · Convergence</div>
 <ul>
 <li>L-smoothness gives a safe step, 0 &lt; α &lt; 2/L.</li>
 <li>Convex: global minimum, with k ∼ κ · log(1/ε).</li>
 <li>Non-convex: a stationary point, not necessarily the global minimum.</li>
 </ul></div>
-<div class="card go" data-go="11"><div class="cap">4 · Effect on the learned function</div>
+<div class="card go" data-go="9"><div class="cap">4 · Effect on the learned function</div>
 <div class="desc" style="font-size:13px;line-height:1.6">The choices (θ₀, α, K) select which function f<sub>θ</sub> is learned. The algorithm carries an implicit bias toward smooth, low-norm solutions, and early stopping acts as regularization.</div></div>
 <kp><b>In one line</b>Gradient descent is steepest descent applied to a high-dimensional, non-convex objective. Its numerical behavior, namely conditioning, stability and stopping, directly shapes the regression function it produces.</kp>
 </div>
@@ -442,7 +442,7 @@ window.world3d={activate(on){active=on;keys.clear();document.querySelector('.foo
 
 <script>
 (()=>{
-const seq=[{s:'p1a',l:'Part 1 · Empirical risk'},{d:0,l:'Lab · Empirical risk'},{s:'p1c',l:'Part 1 · Convex vs non-convex'},{d:1,l:'Lab · Two landscapes'},{s:'p2a',l:'Part 2 · The iteration'},{d:2,l:'Lab · Gradient descent'},{s:'p2b',l:'Part 2 · Cheap gradients'},{s:'p2d',l:'Part 2 · Numerical levers'},{s:'p3a',l:'Part 3 · Descent lemma'},{s:'p3b',l:'Part 3 · Convex vs non-convex'},{d:3,l:'Lab · Gradient descent in 3D'},{s:'p4a',l:'Part 4 · Algorithm selects'},{s:'p4b',l:'Part 4 · Generalization'},{s:'p5',l:'Part 5 · Summary'}];
+const seq=[{d:0,l:'Lab · Empirical risk'},{d:1,l:'Lab · Two landscapes'},{s:'p2a',l:'Part 2 · The iteration'},{d:2,l:'Lab · Gradient descent'},{s:'p2b',l:'Part 2 · Cheap gradients'},{s:'p2d',l:'Part 2 · Numerical levers'},{s:'p3a',l:'Part 3 · Descent lemma'},{s:'p3b',l:'Part 3 · Convex vs non-convex'},{d:3,l:'Lab · Gradient descent in 3D'},{s:'p4a',l:'Part 4 · Algorithm selects'},{s:'p4b',l:'Part 4 · Generalization'},{s:'p5',l:'Part 5 · Summary'}];
 let cur=0;const bar=document.getElementById('dbar');
 seq.forEach((e,i)=>{const b=document.createElement('i');b.title=e.l;b.onclick=()=>show(i);bar.append(b)});
 function show(i){cur=Math.max(0,Math.min(seq.length-1,i));const e=seq[cur],lab=e.d!==undefined;
