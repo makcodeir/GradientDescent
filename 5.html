@@ -175,12 +175,12 @@ eq fr{font-size:.9em;margin:0 .24em}eq fr i{line-height:1.3;padding:0 .2em}
 <div class="topline"><span>Part 2 · Gradient descent as a numerical method</span><span>3 / 3</span></div>
 <header class="header"><div>
 <div class="eyebrow">Numerical levers</div>
-<h1>The Two Levers: Step Size and Jacobians</h1>
-<p class="lead">Three things govern whether gradient descent behaves well: the step size, the conditioning of the problem, and the depth of the network.</p>
+<h1>Step Size and the Descent Lemma</h1>
+<p class="lead">A sufficiently small step decreases the loss when the gradient is smooth.</p>
 </div></header>
 <div class="pb pb3">
 <div class="card">
-<div class="cap">1 · Step size α</div>
+<div class="cap">Step size α</div>
 <p>A stability parameter, not just a tuning knob.</p>
 <ul>
 <li>Too small: convergence is extremely slow.</li>
@@ -190,19 +190,23 @@ eq fr{font-size:.9em;margin:0 .24em}eq fr i{line-height:1.3;padding:0 .2em}
 <eq class="box">0 &lt; α &lt; 2 / L</eq>
 </div>
 <div class="card">
-<div class="cap">2 · Conditioning</div>
-<p>The convergence rate depends on the condition number of the Hessian:</p>
-<eq>κ = λ<sub>max</sub> / λ<sub>min</sub></eq>
-<p>A large κ means slow convergence, the same phenomenon as in linear solvers.</p>
+<div class="cap">L-smoothness</div>
+<eq>‖∇J(θ) − ∇J(θ′)‖ ≤ L ‖θ − θ′‖</eq>
+<p>In plain words, the gradient does not change too fast. L measures how strongly the loss curves.</p>
 </div>
 <div class="card">
-<div class="cap">3 · Vanishing and exploding gradients</div>
-<p>δ<sup>(l)</sup> involves repeated multiplication by W<sup>(l+1)</sup> and σ′. The magnitude can therefore decay or grow exponentially with depth:</p>
-<eq>‖δ<sup>(l)</sup>‖ ∼ ∏<sub>j&gt;l</sub> ‖W<sup>(j)</sup>‖ · ‖σ′‖</eq>
+<div class="cap">Descent lemma</div>
+<eq class="box">J(θ<sub>k+1</sub>) ≤ J(θ<sub>k</sub>) − α ( 1 − Lα/2 ) ‖∇J(θ<sub>k</sub>)‖²</eq>
+<ul>
+<li>If 0 &lt; α &lt; 2/L, the bracketed term is positive.</li>
+<li>The loss then strictly decreases at every step.</li>
+<li>Too large a step, and the loss can increase instead.</li>
+</ul>
+<p>This is the same stability condition known from numerical methods: the step is limited by the curvature of the problem.</p>
 </div>
-<kp><b>Key point</b>Gradient descent is simple to write, but its behavior is governed by conditioning and stability. These are the same principles as in classical numerical analysis, now applied to a non-convex, high-dimensional problem.</kp>
+<kp><b>Key point</b>The safe step size is determined by the smoothness constant L.</kp>
 </div>
-<bridge><b>Next →</b> Part 3: making the stability condition 0 &lt; α &lt; 2/L precise.</bridge>
+
 </section>
 
 <!-- ============ PART 3 ============ -->
@@ -453,7 +457,7 @@ window.world3d={activate(on){active=on;keys.clear();document.querySelector('.foo
 
 <script>
 (()=>{
-const seq=[{d:0,l:'Lab · Empirical risk'},{d:1,l:'Lab · Two landscapes'},{s:'p2a',l:'Part 2 · The iteration'},{d:2,l:'Lab · Gradient descent'},{s:'p2b',l:'Part 2 · Cheap gradients'},{s:'p2d',l:'Part 2 · Numerical levers'},{s:'p3a',l:'Part 3 · Descent lemma'},{s:'p3b',l:'Part 3 · Convex vs non-convex'},{d:3,l:'Lab · Gradient descent in 3D'},{s:'p4a',l:'Part 4 · Algorithm selects'},{s:'p4b',l:'Part 4 · Generalization'},{s:'p5',l:'Part 5 · Summary'}];
+const seq=[{d:0,l:'Lab · Empirical risk'},{d:1,l:'Lab · Two landscapes'},{d:2,l:'Lab · Gradient descent'},{s:'p2b',l:'Part 2 · Cheap gradients'},{s:'p2d',l:'Part 2 · Numerical levers'},{d:3,l:'Lab · Gradient descent in 3D'}];
 let cur=0;const bar=document.getElementById('dbar');
 seq.forEach((e,i)=>{const b=document.createElement('i');b.title=e.l;b.onclick=()=>show(i);bar.append(b)});
 function show(i){cur=Math.max(0,Math.min(seq.length-1,i));const e=seq[cur],lab=e.d!==undefined;
